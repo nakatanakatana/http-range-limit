@@ -3,6 +3,7 @@ linters:
     - exhaustivestruct
     - gochecknoglobals
     - exhaustruct
+    - depguard
 
     # deprecated
     - scopelint

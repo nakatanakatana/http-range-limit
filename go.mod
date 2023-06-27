@@ -1,3 +1,3 @@
-module github.com/nakatanakatana/go-template
+module github.com/nakatanakatana/http-range-limit
 
-go 1.19
+go 1.20
