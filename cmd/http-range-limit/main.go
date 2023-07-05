@@ -5,11 +5,15 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	httprangelimit "github.com/nakatanakatana/http-range-limit"
 )
 
 const (
-	HTTPReadTimeout  = 30 * time.Second
-	HTTPWriteTimeout = 30 * time.Second
+	HTTPReadTimeout  = 5 * time.Second
+	HTTPWriteTimeout = 5 * time.Second
+
+	RangeMaxLengthBytes = 1 * 1024 * 1024
 )
 
 func main() {
@@ -18,8 +22,19 @@ func main() {
 		log.Fatal("TARGET_DIR is required")
 	}
 
+	cfg := httprangelimit.Config{
+		MaxLengthBytes: RangeMaxLengthBytes,
+	}
+
 	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(http.Dir(targetDir)))
+	fs := http.Dir(targetDir)
+	mux.Handle("/",
+		httprangelimit.HTTPRangeLimit(
+			cfg,
+			fs,
+			http.FileServer(fs),
+		),
+	)
 
 	server := http.Server{
 		Addr:         ":8080",
